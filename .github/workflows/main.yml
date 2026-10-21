@@ -1,0 +1,67 @@
+name: Ali-Control Governance Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-control-document:
+    name: Validate governance README
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate README and mandatory governance rules
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+
+          path = Path("README.md")
+          errors = []
+
+          if not path.is_file():
+              print("FAIL: README.md is missing.")
+              sys.exit(1)
+
+          text = path.read_text(encoding="utf-8")
+          if not text.strip():
+              print("FAIL: README.md is empty.")
+              sys.exit(1)
+
+          # Every numbered governance section (1–12) must exist as a Markdown H2.
+          for number in range(1, 13):
+              marker = f"## {number}."
+              if marker not in text:
+                  errors.append(f"Missing required governance section: {marker}")
+
+          # Verify core ownership, authorization, and repository-entry safeguards.
+          required_phrases = [
+              "صاحب القرار النهائي",
+              "لا يجوز تجاوزها من دون توجيه صريح من علي",
+              "لا يُعدّ إذناً بالتعديل أو الحذف أو الدمج أو النشر أو تغيير إعدادات الحماية",
+              "دون الموافقة الصريحة المطلوبة من علي",
+              "ولا ينتقل إلى مستودع آخر",
+          ]
+          for phrase in required_phrases:
+              if phrase not in text:
+                  errors.append(f"Missing required governance rule: {phrase}")
+
+          if errors:
+              print("FAIL: Ali-Control governance validation failed:")
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+
+          print("PASS: README.md exists and is non-empty.")
+          print("PASS: All 12 numbered governance sections are present.")
+          print("PASS: Core ownership, authorization, and repository-entry safeguards are present.")
+          PY
