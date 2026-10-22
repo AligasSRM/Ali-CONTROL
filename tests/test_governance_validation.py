@@ -1,4 +1,5 @@
 import io
+import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -92,6 +93,45 @@ class GovernanceValidatorTests(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertIn(f"PASS: {target} exists and is non-empty.", output.getvalue())
         self.assertNotIn("PASS: README.md exists", output.getvalue())
+
+
+    def test_end_to_end_cli_accepts_approved_repository_readme(self):
+        repository_root = Path(__file__).resolve().parents[1]
+        validator = repository_root / "scripts" / "validate_governance.py"
+        readme = repository_root / "README.md"
+
+        completed = __import__("subprocess").run(
+            [sys.executable, str(validator), str(readme)],
+            cwd=repository_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout + completed.stderr)
+        self.assertIn(f"PASS: {readme} exists and is non-empty.", completed.stdout)
+        self.assertIn("PASS: all 12 numbered governance sections are present.", completed.stdout)
+
+    def test_end_to_end_cli_rejects_invalid_governance_document(self):
+        repository_root = Path(__file__).resolve().parents[1]
+        validator = repository_root / "scripts" / "validate_governance.py"
+        invalid_document = valid_document().replace("## 4. Section 4\\n", "", 1)
+        invalid_document = invalid_document.replace(REQUIRED_RULES["final decision owner"], "", 1)
+
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "invalid-governance.md"
+            target.write_text(invalid_document, encoding="utf-8")
+            completed = __import__("subprocess").run(
+                [sys.executable, str(validator), str(target)],
+                cwd=repository_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(completed.returncode, 1, msg=completed.stdout + completed.stderr)
+        self.assertIn("Missing or invalid numbered governance section: 4", completed.stdout)
+        self.assertIn("Missing mandatory governance rule: final decision owner", completed.stdout)
 
 
 if __name__ == "__main__":
