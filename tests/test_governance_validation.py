@@ -1,4 +1,5 @@
 import io
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -100,7 +101,7 @@ class GovernanceValidatorTests(unittest.TestCase):
         validator = repository_root / "scripts" / "validate_governance.py"
         readme = repository_root / "README.md"
 
-        completed = __import__("subprocess").run(
+        completed = subprocess.run(
             [sys.executable, str(validator), str(readme)],
             cwd=repository_root,
             capture_output=True,
