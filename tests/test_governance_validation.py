@@ -122,7 +122,7 @@ class GovernanceValidatorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / "invalid-governance.md"
             target.write_text(invalid_document, encoding="utf-8")
-            completed = __import__("subprocess").run(
+            completed = subprocess.run(
                 [sys.executable, str(validator), str(target)],
                 cwd=repository_root,
                 capture_output=True,
