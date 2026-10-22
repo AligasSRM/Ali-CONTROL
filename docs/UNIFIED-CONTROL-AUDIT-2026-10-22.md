@@ -96,7 +96,7 @@
 
 **Comparison reference:** `main` at `d8a79946dda319c30403e40f671876e2eb06f844`.  
 **Method:** GitHub compare endpoint, `main...<branch>`, read-only.  
-**Scope note:** This is a fresh comparison snapshot for the ten branches listed below. It does not replace the historical snapshot in `docs/A2-BRANCH-COMPARISON-AUDIT.md` and does not authorize branch cleanup, merges, or changes to closed stages.
+**Scope note:** This is a fresh comparison snapshot for the twelve non-main branches listed below. It does not replace the historical snapshot in `docs/A2-BRANCH-COMPARISON-AUDIT.md` and does not authorize branch cleanup, merges, or changes to closed stages.
 
 | Branch | Ahead | Behind | Compare status | Ahead-side files reported by comparison |
 |---|---:|---:|---|---|
@@ -110,6 +110,8 @@
 | `security/add-repository-hardening` | 0 | 15 | behind | No ahead-only files reported |
 | `security/remove-unused-pip-dependabot` | 1 | 14 | diverged | Modified: `.github/dependabot.yml` |
 | `test/ci-required-check-failure` | 2 | 20 | diverged | No ahead-only files reported by the comparison response |
+| `docs/a2-branch-audit-report` | 0 | 1 | behind | No ahead-only files reported |
+| `docs/unified-control-audit-2026-10-22` | 4 | 0 | ahead | Added: `docs/UNIFIED-CONTROL-AUDIT-2026-10-22.md` (this audit document) |
 
 ### Comparison links
 
@@ -129,11 +131,11 @@
 1. Ahead/behind counts describe commit-graph relationships, not quality, risk, branch usage, or permission to delete.
 2. “No ahead-only files reported” means the comparison response listed no files for that branch in this direction; it does not mean the branch was deleted, reviewed for every purpose, or approved for cleanup.
 3. The counts differ from the dated table in `docs/A2-BRANCH-COMPARISON-AUDIT.md` because that document records an earlier `main` reference. Both snapshots should remain distinguishable rather than silently overwriting the historical record.
-4. The comparison set is now documented in this unified audit, but this does not reopen A1 or A2, redefine their acceptance criteria, approve the governance proposal, delete branches, alter protection, or authorize a merge.
+4. The twelve-branch comparison set is now documented in this unified audit, but this does not reopen A1 or A2, redefine their acceptance criteria, approve the governance proposal, delete branches, alter protection, or authorize a merge.
 
 ## 10. Closeout of this documentation pass
 
-- The ten current `main`-to-branch comparisons are recorded above with their reference SHA, ahead/behind counts, statuses, and reported file differences.
+- The twelve current `main`-to-branch comparisons are recorded above with their reference SHA, ahead/behind counts, statuses, and reported file differences.
 - The earlier A2 report remains a historical record; its snapshot was not rewritten.
 - A1 and A2 remain closed under the owner's operating instructions and are not modified by this documentation update.
 - PR #12 remains outside scope and untouched.
