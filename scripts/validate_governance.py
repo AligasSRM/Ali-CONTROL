@@ -56,7 +56,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print("PASS: README.md exists and is non-empty.")
+    print(f"PASS: {path} exists and is non-empty.")
     print("PASS: all 12 numbered governance sections are present.")
     print("PASS: core ownership, authorization, and repository-entry safeguards are present.")
     return 0
