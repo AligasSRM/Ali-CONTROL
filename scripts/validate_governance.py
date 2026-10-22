@@ -57,7 +57,7 @@ def validate_text(content: str) -> list[str]:
         return ["README is empty."]
 
     for number in range(1, 8):
-        pattern = rf"^##\\s+{number}\\.\\s+\\S.*$"
+        pattern = rf"^##\s+{number}\.\s+\S.*$"
         if not re.search(pattern, content, flags=re.MULTILINE):
             errors.append(f"Missing or invalid numbered section: {number}")
 
