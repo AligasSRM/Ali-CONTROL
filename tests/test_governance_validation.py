@@ -116,7 +116,7 @@ class GovernanceValidatorTests(unittest.TestCase):
     def test_end_to_end_cli_rejects_invalid_governance_document(self):
         repository_root = Path(__file__).resolve().parents[1]
         validator = repository_root / "scripts" / "validate_governance.py"
-        invalid_document = valid_document().replace("## 4. Section 4\\n", "", 1)
+        invalid_document = valid_document().replace("## 4. Section 4\n", "", 1)
         invalid_document = invalid_document.replace(REQUIRED_RULES["final decision owner"], "", 1)
 
         with tempfile.TemporaryDirectory() as directory:
