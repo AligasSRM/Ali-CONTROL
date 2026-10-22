@@ -29,6 +29,32 @@ The counts are commit-graph comparison results, not a measure of risk, quality, 
 | `test/ci-required-check-failure` | 2 | 16 | diverged | Test-related branch; keep classified as a test branch unless separately reviewed. |
 | `main` | — | — | reference | Protected branch at the reference commit above. |
 
+## 2A. Pull-request to branch reconciliation (follow-up)
+
+Follow-up read-only checks compared the current branch listing with the source refs recorded on PRs #1–#10. PR #11 is the documentation PR for this report.
+
+| PR | Outcome at check | Source branch recorded on PR | Reconciliation result |
+|---|---|---|---|
+| [#1](https://github.com/AligasSRM/Ali-Control/pull/1) | Merged | `ci/validate-control-governance` | Exact current branch-head SHA match: `5f4d89a1e39e26928f1216807d929535c3cb2007`. |
+| [#2](https://github.com/AligasSRM/Ali-Control/pull/2) | Closed, not merged | `test/ci-required-check-failure` | Branch exists, but its current head `ef5771573ceb280a85a4a995b5c3d596682ee78b` is one commit ahead of PR head `f7e0e0747532f5b8ca2b05e84fc741b2339311a2`. The comparison shows the PR head is an ancestor of the current branch head; the branch was not missing. |
+| [#3](https://github.com/AligasSRM/Ali-Control/pull/3) | Merged | `fix/ci-governance-validation` | Exact current branch-head SHA match: `636bd0d80dc76ee42cbf6d6d878aaef5e3e04bcb`. |
+| [#4](https://github.com/AligasSRM/Ali-Control/pull/4) | Merged | `security/add-repository-hardening` | Exact current branch-head SHA match: `6f612c3bee59b7a0c52524da2ad0fa41912474fe`. |
+| [#5](https://github.com/AligasSRM/Ali-Control/pull/5) | Closed, not merged | `dependabot/github_actions/actions/checkout-7` | This source branch is absent from the current branch listing. Its PR history remains accessible; head SHA was `1a1df7bc2c9bda92ce611718748b67d16cd2a674`. The current `ci/upgrade-checkout-v7-current-main` branch is related by topic but diverges from that head, so it is not treated as the same branch. |
+| [#6](https://github.com/AligasSRM/Ali-Control/pull/6) | Merged | `dependabot/github_actions/actions/setup-python-7` | Exact current branch-head SHA match: `9f04f64c4613b10c43c3a25d887a95e9ba17660b`. |
+| [#7](https://github.com/AligasSRM/Ali-Control/pull/7) | Merged | `security/remove-unused-pip-dependabot` | Exact current branch-head SHA match: `bbc0aec77b5ce069501baf940c3db8a2d54139d0`. |
+| [#8](https://github.com/AligasSRM/Ali-Control/pull/8) | Merged | `ci/upgrade-checkout-v7-current-main` | Exact current branch-head SHA match: `b62b87e6d4b5a9a5c6ba7aa2a3fdce48745e0a8c`. |
+| [#9](https://github.com/AligasSRM/Ali-Control/pull/9) | Closed, not merged | `a1/codeowner-enforcement-test` | Exact current branch-head SHA match: `dda149967531be73ac489ad0173342bbc5391d63`. A1 remains closed; this mapping does not authorize reopening or editing it. |
+| [#10](https://github.com/AligasSRM/Ali-Control/pull/10) | Merged | `docs/control-status-register-draft` | Exact current branch-head SHA match: `689a87564d62a5212318bf0a35a07ca764bb7427`. |
+| [#11](https://github.com/AligasSRM/Ali-Control/pull/11) | Open draft | `docs/a2-branch-audit-report` | This report's branch; head SHA at this follow-up check is the audit-documentation commit. |
+
+### Reconciliation conclusions
+
+- PRs #1–#10 each have an identifiable source ref recorded in their PR metadata.
+- Nine of those ten source branches are present in the current branch listing. PR #2's source branch remains present but has advanced one commit since the PR head.
+- The only source branch not present in the current branch listing is PR #5's `dependabot/github_actions/actions/checkout-7`. The available evidence establishes its absence from the current list, not who removed it or why.
+- PR #8's checkout-v7 work is related by subject to PR #5, but the commit comparison is divergent; do not claim they are identical or that one is a direct continuation of the other.
+- The follow-up branch listing now includes `docs/a2-branch-audit-report`, created for PR #11. The original comparison table above remains a historical snapshot of the ten non-main branches present before this report branch was created.
+
 ### Comparison links
 
 - [A1 enforcement test](https://github.com/AligasSRM/Ali-Control/compare/main...a1/codeowner-enforcement-test)
@@ -73,11 +99,11 @@ These are the committer timestamps returned by GitHub for the inspected branch-h
 2. **A1 stays closed.** Do not reopen or modify the A1 test branch or A1 files without new explicit authorization.
 3. **Do not merge `proposal/governance-v2-validation` automatically.** Its changes are divergent and the proposal is explicitly unapproved; review and approval are required before any adoption.
 4. **Investigate PR #5 branch traceability** if needed; current evidence establishes only that the source branch was not present in the inspected branch list.
-5. **No repository changes are proposed by this report other than this documentation file.** Protection settings, access, workflows, and application code are outside this audit's write scope.
+5. **No repository changes are proposed by this report other than this documentation file and this report's follow-up documentation update.** Protection settings, access, workflows, and application code are outside this audit's write scope.
 
 ## 6. A2 status
 
-**Branch comparison completed for the ten non-main branches visible at audit time. A2 is not declared fully closed by this report.** Remaining items are branch-retention decisions, any desired historical investigation of PR #5, and owner review of the divergent proposal. Those decisions are separate from this read-only comparison.
+**Branch comparison completed for the ten non-main branches visible at audit time. A2 is not declared fully closed by this report.** The PR-to-branch mapping is now completed. Remaining items are branch-retention decisions, any desired investigation into the absent PR #5 source ref, and owner review of the divergent proposal. Those decisions are separate from this read-only comparison.
 
 ## 7. Evidence sources
 
