@@ -24,59 +24,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Validate mandatory governance structure and rules
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          import sys
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
-          path = Path("README.md")
-          errors = []
+      - name: Run governance validator unit tests
+        run: python3 -m unittest discover -s tests -v
 
-          if not path.is_file():
-              print("FAIL: README.md is missing.")
-              sys.exit(1)
-
-          text = path.read_text(encoding="utf-8")
-          if not text.strip():
-              print("FAIL: README.md is empty.")
-              sys.exit(1)
-
-          # Require the seven numbered governance sections.
-          for number in range(1, 8):
-              pattern = rf"^##\s+{number}\.\s+\S.*$"
-              if not re.search(pattern, text, flags=re.MULTILINE):
-                  errors.append(f"Missing or invalid numbered section: {number}")
-
-          for heading in ("## الملخص التنفيذي", "## سجل الاعتماد"):
-              if heading not in text:
-                  errors.append(f"Missing required heading: {heading}")
-
-          required_rules = {
-              "Final decision owner": "صاحب القرار النهائي",
-              "Explicit authorization": "لا ينفّذ أليكس أي تغيير غير مشمول بتفويض واضح",
-              "Repository separation": "لا ينتقل أليكس إلى مشروع آخر من تلقاء نفسه",
-              "Secret protection": "لا تُعرض كلمات المرور أو مفاتيح الوصول",
-              "Evidence-based completion": "عند نقص الأدلة، لا تُصنّف المهمة أخضر",
-              "Verified documentation": "لا يؤكد أليكس حفظ التوثيق أو نشره إلا بعد التحقق",
-              "GitHub protection evidence": "لا تُعد القاعدة فعّالة تقنياً لمجرد كتابتها",
-              "Approval before policy changes": "موافقة صريحة من علي قبل تطبيقها",
-          }
-
-          for name, phrase in required_rules.items():
-              if phrase not in text:
-                  errors.append(f"Missing mandatory rule: {name}")
-
-          if errors:
-              print("FAIL: Ali-Control governance validation failed:")
-              for error in errors:
-                  print(f"- {error}")
-              sys.exit(1)
-
-          print("PASS: README.md exists and is non-empty.")
-          print("PASS: All seven numbered sections are present.")
-          print("PASS: Executive summary and approval record are present.")
-          print("PASS: Mandatory governance rules are present.")
-          PY
+      - name: Validate the repository README
+        run: python3 scripts/validate_governance.py README.md
