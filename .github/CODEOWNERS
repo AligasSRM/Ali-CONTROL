@@ -5,4 +5,5 @@
 /.github/CODEOWNERS @AligasSRM @alisrm73
 /scripts/ @AligasSRM
 /tests/ @AligasSRM @alisrm73
+/docs/ @AligasSRM @alisrm73
 /README.md @AligasSRM
