@@ -92,7 +92,7 @@
 
 هذه الوثيقة سجل توثيقي للمراجعة، وليست موافقة على التنفيذ أو الدمج. يجب مراجعة محتواها قبل اتخاذ أي خطوة لاحقة.
 
-## 9. Detailed reconciliation of the ten branch comparisons
+## 9. Detailed reconciliation of the twelve branch comparisons
 
 **Comparison reference:** `main` at `d8a79946dda319c30403e40f671876e2eb06f844`.  
 **Method:** GitHub compare endpoint, `main...<branch>`, read-only.  
@@ -111,7 +111,7 @@
 | `security/remove-unused-pip-dependabot` | 1 | 14 | diverged | Modified: `.github/dependabot.yml` |
 | `test/ci-required-check-failure` | 2 | 20 | diverged | No ahead-only files reported by the comparison response |
 | `docs/a2-branch-audit-report` | 0 | 1 | behind | No ahead-only files reported |
-| `docs/unified-control-audit-2026-10-22` | 4 | 0 | ahead | Added: `docs/UNIFIED-CONTROL-AUDIT-2026-10-22.md` (this audit document) |
+| `docs/unified-control-audit-2026-10-22` | 5 | 0 | ahead | Added: `docs/UNIFIED-CONTROL-AUDIT-2026-10-22.md` (this audit document) |
 
 ### Comparison links
 
@@ -142,3 +142,59 @@
 - No branch was deleted, no pull request was created or merged, and no repository protection setting was changed.
 - This closeout records completion of the comparison-documentation pass only. It is not a claim of production readiness or approval of any branch content.
 
+## 11. Mandatory-check verification and seven-branch reconciliation — 2026-10-23
+
+**Inspection mode:** read-only GitHub API inspection. Branch-head SHAs and check-run results below were read from the repository during this pass. No branch, workflow, ruleset, PR, or source file was changed by the inspection.
+
+### 11.1 Active main ruleset and mandatory check
+
+The repository ruleset `ALI-CONTROL-MAIN-PROTECTION` (ID `25596528`) was read directly and reports **active** enforcement for `refs/heads/main`. Its rules include:
+- Required status check: `Validate governance README`.
+- Strict required-status-check policy: enabled.
+- Pull request required, at least one approving review, Code Owner review required, last-push approval required, and review-thread resolution required.
+- Branch deletion and non-fast-forward updates prohibited.
+
+The branch-protection endpoint itself returned HTTP 403 to this integration, so this record relies on the directly readable repository ruleset, not on a separate branch-protection response.
+
+### 11.2 Current branch-head checks
+
+| Branch | Head SHA (short) | Observed checks on that head | Result |
+|---|---|---|---|
+| `a1/codeowner-enforcement-test` | `dda1499` | CodeQL; Analyze Python; Validate governance README (push and PR contexts) | All 4 check runs succeeded |
+| `ci/upgrade-checkout-v7-current-main` | `b62b87e` | CodeQL; Analyze Python; Validate governance README (push and PR contexts) | All 4 check runs succeeded |
+| `dependabot/github_actions/actions/setup-python-7` | `9f04f64` | CodeQL; Analyze Python; Validate governance README (push and PR contexts) | All 4 check runs succeeded |
+| `fix/ci-governance-validation` | `636bd0d` | Validate governance README (push and PR contexts) | Both observed check runs succeeded; CodeQL/Analyze Python were not present in the check-runs response for this exact head |
+| `proposal/governance-v2-validation` | `bf3182f` | Validate proposed governance files; Validate governance README | Both succeeded; these are proposal-validation results, not approval to merge |
+| `security/remove-unused-pip-dependabot` | `bbc0aec` | CodeQL; Analyze Python; Validate governance README (push and PR contexts); Dependabot config check | All 5 check runs succeeded |
+| `test/ci-required-check-failure` | `ef57715` | Validate governance README | Current head check succeeded after restoring the required phrase |
+
+“Observed checks succeeded” describes the listed runs only; it does not assert that every possible workflow or operational test ran.
+
+### 11.3 Required-check failure test: evidence and limits
+
+- Test commit: `f7e0e0747532f5b8ca2b05e84fc741b2339311a2`.
+- Failed PR-context run: [39696891333](https://github.com/AligasSRM/Ali-Control/actions/runs/39696891333).
+- Failed push-context run: [39696882379](https://github.com/AligasSRM/Ali-Control/actions/runs/39696882379).
+- The validator failed specifically because the test changed the exact required phrase from `ولا ينتقل إلى مستودع آخر` to `ولا ينتقل إلى أي مستودع آخر`; the required literal phrase was no longer present.
+- Restoration commit: `ef5771573ceb280a85a4a995b5c3d596682ee78b`; the subsequent run [39697051362](https://github.com/AligasSRM/Ali-Control/actions/runs/39697051362) succeeded.
+- PR #2 is closed, locked, and unmerged. The active main ruleset independently confirms that `Validate governance README` is required. No merge attempt was made as part of this audit, so the workflow failure is proven, while an actual attempted-merge rejection was not separately exercised.
+
+### 11.4 Branch-to-PR status match
+
+| Branch | Matching PR | GitHub state at inspection | Handling |
+|---|---|---|---|
+| `a1/codeowner-enforcement-test` | [#9](https://github.com/AligasSRM/Ali-Control/pull/9) | Closed, not merged | A1 test evidence only; keep A1 closed |
+| `ci/upgrade-checkout-v7-current-main` | [#8](https://github.com/AligasSRM/Ali-Control/pull/8) | Closed, merged | Historical source branch; no new action |
+| `dependabot/github_actions/actions/setup-python-7` | [#6](https://github.com/AligasSRM/Ali-Control/pull/6) | Closed, merged | Historical source branch; no new action |
+| `fix/ci-governance-validation` | [#3](https://github.com/AligasSRM/Ali-Control/pull/3) | Closed, merged | Validator/tests are already represented on main; no reapplication |
+| `proposal/governance-v2-validation` | [#12](https://github.com/AligasSRM/Ali-Control/pull/12) | Closed, locked, not merged | Explicitly out of scope; do not reopen, edit, or merge |
+| `security/remove-unused-pip-dependabot` | [#7](https://github.com/AligasSRM/Ali-Control/pull/7) | Closed, merged | Current Dependabot file was previously found identical to main; no reapplication |
+| `test/ci-required-check-failure` | [#2](https://github.com/AligasSRM/Ali-Control/pull/2) | Closed, locked, not merged | Test evidence only; do not reopen or merge |
+
+### 11.5 Closeout
+
+- The required governance check is confirmed in the active main ruleset.
+- All seven branch heads were matched to their PR records, and the observed current-head checks were recorded above.
+- The intentionally failing test and subsequent successful restoration are both evidenced by run IDs and commit SHAs.
+- No source code, workflow, branch protection, ruleset, PR state, or `main` content was changed in this audit pass.
+- A1 and A2 remain closed. PR #12 remains closed, locked, and unmerged. No branches were deleted and no PR was created or merged.
