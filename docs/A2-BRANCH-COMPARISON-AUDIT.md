@@ -4,7 +4,7 @@
 - **Audit date:** 2026-10-22 (UTC)
 - **Reference branch:** `main`
 - **Reference commit at audit:** `f9ef6b8909e26e708e1c1575578f2fbe67beb7fc`
-- **Status:** Evidence report; branch-retention decisions remain pending.
+- **Status:** A2 read-only audit completed; operational branch-retention decisions are explicitly outside this authorization and remain pending separate approval.
 - **Scope:** Read-only inspection and comparison. No branches were deleted, no pull requests merged, and no repository protection settings changed as part of this audit.
 
 ## 1. Summary
@@ -101,9 +101,16 @@ These are the committer timestamps returned by GitHub for the inspected branch-h
 4. **Investigate PR #5 branch traceability** if needed; current evidence establishes only that the source branch was not present in the inspected branch list.
 5. **No repository changes are proposed by this report other than this documentation file and this report's follow-up documentation update.** Protection settings, access, workflows, and application code are outside this audit's write scope.
 
-## 6. A2 status
+## 6. A2 status and closeout
 
-**Branch comparison completed for the ten non-main branches visible at audit time. A2 is not declared fully closed by this report.** The PR-to-branch mapping is now completed. Remaining items are branch-retention decisions, any desired investigation into the absent PR #5 source ref, and owner review of the divergent proposal. Those decisions are separate from this read-only comparison.
+**A2 read-only audit is complete for the authorized scope.** The branch comparison and PR-to-branch reconciliation for PRs #1–#10 are documented, with evidence links and commit identifiers. The initial branch comparison is a dated snapshot of ten non-main branches; the follow-up listing also includes this report's documentation branch.
+
+The following are recorded as **out-of-scope decisions**, not unfinished audit steps:
+- Whether to delete or retain individual branches. No branch is deleted or recommended for deletion solely from ahead/behind counts.
+- Who deleted or why the source branch for PR #5 is absent from the current branch list. The available evidence does not establish cause.
+- Whether to adopt `proposal/governance-v2-validation`. It remains unapproved and requires a separate owner decision.
+
+A1 remains closed. No protection settings or access controls were changed. This report does not claim production readiness. Any cleanup, proposal adoption, or merge of this report requires the appropriate separate approval; this audit did not perform those actions.
 
 ## 7. Evidence sources
 
