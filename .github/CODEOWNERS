@@ -1,0 +1,7 @@
+# Route sensitive repository changes to the repository owner for review.
+* @AligasSRM
+
+/.github/ @AligasSRM
+/scripts/ @AligasSRM
+/tests/ @AligasSRM
+/README.md @AligasSRM
