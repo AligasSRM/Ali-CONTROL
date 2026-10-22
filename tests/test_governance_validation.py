@@ -1,6 +1,11 @@
+import io
+import tempfile
 import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
+from unittest.mock import patch
 
-from scripts.validate_governance import REQUIRED_RULES, validate_text
+from scripts.validate_governance import REQUIRED_RULES, main, validate_text
 
 
 def valid_document() -> str:
@@ -44,6 +49,49 @@ class GovernanceValidatorTests(unittest.TestCase):
                     any("mandatory governance rule" in error for error in errors),
                     msg=f"Validator did not report missing rule {name}: {errors}",
                 )
+
+    def test_cli_rejects_missing_argument(self):
+        output = io.StringIO()
+        with patch("sys.argv", ["scripts/validate_governance.py"]), redirect_stdout(output):
+            result = main()
+        self.assertEqual(result, 2)
+        self.assertIn("Usage:", output.getvalue())
+
+    def test_cli_rejects_missing_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            missing_path = Path(directory) / "missing.md"
+            output = io.StringIO()
+            with patch(
+                "sys.argv", ["scripts/validate_governance.py", str(missing_path)]
+            ), redirect_stdout(output):
+                result = main()
+        self.assertEqual(result, 1)
+        self.assertIn("file not found", output.getvalue())
+
+    def test_cli_rejects_invalid_utf8(self):
+        with tempfile.TemporaryDirectory() as directory:
+            invalid_path = Path(directory) / "invalid.md"
+            invalid_path.write_bytes(b"\xff\xfe\xfa")
+            output = io.StringIO()
+            with patch(
+                "sys.argv", ["scripts/validate_governance.py", str(invalid_path)]
+            ), redirect_stdout(output):
+                result = main()
+        self.assertEqual(result, 1)
+        self.assertIn("cannot read", output.getvalue())
+
+    def test_cli_reports_the_actual_validated_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "governance-check.md"
+            target.write_text(valid_document(), encoding="utf-8")
+            output = io.StringIO()
+            with patch(
+                "sys.argv", ["scripts/validate_governance.py", str(target)]
+            ), redirect_stdout(output):
+                result = main()
+        self.assertEqual(result, 0)
+        self.assertIn(f"PASS: {target} exists and is non-empty.", output.getvalue())
+        self.assertNotIn("PASS: README.md exists", output.getvalue())
 
 
 if __name__ == "__main__":
