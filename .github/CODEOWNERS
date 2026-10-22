@@ -2,6 +2,7 @@
 * @AligasSRM
 
 /.github/ @AligasSRM
+/.github/CODEOWNERS @AligasSRM @alisrm73
 /scripts/ @AligasSRM
-/tests/ @AligasSRM
+/tests/ @AligasSRM @alisrm73
 /README.md @AligasSRM
